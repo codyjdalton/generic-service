@@ -1,6 +1,6 @@
 export const AppConstants = {
 
-    DATASOURCE: process.env.DATASOURCE || 'mongodb://localhost:<port>/<project',
+    DATASOURCE: process.env.DATASOURCE,
 
     // content types
     MESSAGE_V1: 'application/vnd.message.v1+json',
