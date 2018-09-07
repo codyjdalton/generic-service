@@ -26,15 +26,14 @@ describe('AppComponent', () => {
                                   SpecConstants.DEFAULT_CONTENT
 
         component.get('/')
-                 .expect(200)
-                 .expect('Content-Type', expHeader)
-                 .expect((res) => {
-                   expect(res.body.message)
-                   .to.equal(AppConstants.WELCOME_MESSAGE);
-                 })
-                 .end((err, res) => {
-                    if (err) return done(err);
-                    done();
-                 });
+            .expect(200)
+            .expect('Content-Type', expHeader)
+            .expect((res) => {
+                expect(res.body.message).to.equal(AppConstants.WELCOME_MESSAGE);
+            })
+            .end((err, res) => {
+                if (err) return done(err);
+                done();
+            });
     });
 });
