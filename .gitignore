@@ -10,3 +10,5 @@
 
 # system files
 .DS_Store
+
+/.env
