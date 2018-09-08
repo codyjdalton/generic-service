@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@litstack/core": "^0.7.0",
+    "dotenv": "^6.0.0",
     "mongoose": "^5.2.13",
     "rxjs": "^6.3.2",
     "super-injector": "^1.0.4",

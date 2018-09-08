@@ -16,12 +16,6 @@ export class OutcomeService extends ResourceService {
         super();
     }
 
-    public findByKnotId(narrativeId: string): Promise<Document[]> {
-        return this.findByParams({
-            knotId: narrativeId
-        });
-    }
-
     public create(narrativeId: string, knotId: string, 
            key: string, outcome: string): Promise<IOutcome> {
         return new Promise((resolve, reject) => {
