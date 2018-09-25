@@ -19,8 +19,10 @@ export class KnotComponent extends ResourceComponent {
     @PostMapping()
     public createOne(req: HttpRequest, res: HttpResponse): void {
         this.mainService.create(req.body.narrativeId, req.body.key, req.body.title)
-            .then((knot: IKnot) => res.success(knot, 201))
-            .catch(() => res.errored(400));
+            .subscribe(
+                (knot: IKnot) => res.success(knot, 201),
+                () => res.errored(400)
+            );
     }
     
     @PatchMapping({
@@ -33,8 +35,10 @@ export class KnotComponent extends ResourceComponent {
             title: req.body.title || undefined
         };
 
-        this.mainService.updateById(req.params.id, updateBody)
-            .then((item: IKnot) => res.success(item))
-            .catch((err) => res.errored(400, err));
+        this.mainService.updateByIdObservable(req.params.id, updateBody)
+            .subscribe(
+                (item: IKnot) => res.success(item),
+                (err) => res.errored(400, err)
+            );
     }
 }

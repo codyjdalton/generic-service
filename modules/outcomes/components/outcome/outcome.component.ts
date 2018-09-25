@@ -21,8 +21,10 @@ export class OutcomeComponent extends ResourceComponent  {
     createOne(req: HttpRequest, res: HttpResponse): void {
         const body: IOutcome = req.body;
         this.mainService.create(body.narrativeId, body.knotId, body.key, body.destinationType, body.destinationId)
-            .then((outcome: IOutcome) => res.success(outcome, 201))
-            .catch(() => res.errored(400));
+            .subscribe(
+                (outcome: IOutcome) => res.success(outcome, 201),
+                () => res.errored(400)
+            );
     }
 
     @PatchMapping({
@@ -40,8 +42,10 @@ export class OutcomeComponent extends ResourceComponent  {
             destinationId: body.destinationId
         };
 
-        this.mainService.updateById(req.params.id, updateBody)
-            .then((outcome: IOutcome) => res.success(outcome))
-            .catch((err) => res.errored(400, err));
+        this.mainService.updateByIdObservable(req.params.id, updateBody)
+            .subscribe(
+                (outcome: IOutcome) => res.success(outcome),
+                (err) => res.errored(400, err)
+            );
     }
 }

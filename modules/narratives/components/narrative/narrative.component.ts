@@ -35,8 +35,10 @@ export class NarrativeComponent extends ResourceComponent {
             title: req.body.title || undefined
         };
 
-        this.mainService.updateById(req.params.id, updateBody)
-            .then((narrative: INarrative) => res.success(narrative))
-            .catch((err) => res.errored(400, err));
+        this.mainService.updateByIdObservable(req.params.id, updateBody)
+            .subscribe(
+                (narrative: INarrative) => res.success(narrative),
+                (err) => res.errored(400, err)
+            );
     }
 }

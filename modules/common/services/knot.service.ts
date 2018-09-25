@@ -20,25 +20,17 @@ export class KnotService extends ResourceService {
         super();
     }
 
-    create(narrativeId: string, key: string, title: string): Promise<IKnot> {
-        return new Promise((resolve, reject) => {
+    create(narrativeId: string, key: string, title: string): Observable<IKnot> {
 
-            const aKnot: IKnot = new Knot({
-                id: uuid.v4(),
-                narrativeId: narrativeId,
-                key: key,
-                title: title
-            });
-
-            // ensure knot id exists
-            this.narrativeService.findById(narrativeId)
-                .then(() => {
-                    aKnot.save()
-                        .then((knot: IKnot) => resolve(knot))
-                        .catch(() => reject());
-                })
-                .catch(() => reject());
+        const aKnot: IKnot = new Knot({
+            id: uuid.v4(),
+            narrativeId: narrativeId,
+            key: key,
+            title: title
         });
+
+        // ensure knot id exists
+        return from(aKnot.save());
     }
 
     public deleteById(id: string): Observable<any> {

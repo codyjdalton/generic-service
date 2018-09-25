@@ -35,11 +35,11 @@ describe('ThreadComponent', () => {
         narrativeService.create('testKey', 'Test Title')
             .subscribe((narrative: INarrative) => {
                 knotService.create(narrative.id, 'testKey', 'Test Title')
-                    .then((knot: IKnot) => {
+                    .subscribe((knot: IKnot) => {
                         narrativeId = narrative.id;
                         knotId = knot.id;
                         outcomeService.create(narrativeId, knotId, 'testKey', DestinationTypes.DONE, 'testid')
-                            .then((outcome: IOutcome) => {
+                            .subscribe((outcome: IOutcome) => {
                                 outcomeId = outcome.id;
                                 done();
                             });
@@ -85,7 +85,7 @@ describe('ThreadComponent', () => {
                 
                 // verify the item made it to storage
                 threadService.findById(res.body.id)
-                    .then(() => {
+                    .subscribe(() => {
                         done();
                     });
             });
