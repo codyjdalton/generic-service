@@ -1,14 +1,21 @@
 import { Document, Schema, model } from "mongoose";
 
+export enum DestinationTypes {
+    DONE = 'DONE',
+    NARRATIVE = 'NARRATIVE',
+    KNOT = 'KNOT'
+}
+
 export interface IOutcome extends Document {
     id: string;
     narrativeId: string;
     knotId: string;
-    key: string; // usually POSITIVE, NEGATIVE, NEUTRAL
-    outcome: string; // a knot.key or DONE or END
+    key: string;
+    destinationType: DestinationTypes;
+    destinationId: string;
 }
 
-export const OutcomeSchema = new Schema({
+export const OutcomeSchema: Schema = new Schema({
     id: {
         unique: true,
         type: String,
@@ -26,9 +33,14 @@ export const OutcomeSchema = new Schema({
         type: String,
         required: true
     },
-    outcome: {
+    destinationType: {
         type: String,
-        required: true
+        required: true,
+        default: DestinationTypes.DONE
+    },
+    destinationId: {
+        type: String,
+        required: false
     }
 });
 

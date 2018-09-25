@@ -33,7 +33,7 @@ describe('NarrativeComponent', () => {
         const testTitle: string = 'Test Title';
         
         narrativeService.create(testKey, testTitle)
-            .then((narrative) => {
+            .subscribe((narrative) => {
                 component.get('/' + narrative.id)
                     .expect(200)
                     .expect((res) => {
@@ -43,8 +43,7 @@ describe('NarrativeComponent', () => {
                         if (err) return done(err);
                         done();
                     });
-            })
-            .catch(() => done(new Error('Unable to create narrative')));
+            }, () => done(new Error('Unable to create narrative')));
     });
 
     it('should 404 when a single resource is not found', (done) => {
@@ -63,7 +62,7 @@ describe('NarrativeComponent', () => {
         const testTitle: string = 'Test Title';
         
         narrativeService.create(testKey, testTitle)
-            .then(() => {
+            .subscribe(() => {
                 component.get('/')
                     .expect(200)
                     .expect((res) => {
@@ -73,8 +72,7 @@ describe('NarrativeComponent', () => {
                         if (err) return done(err);
                         done();
                     });
-            })
-            .catch((err) => done(err));
+            }, (err) => done(err));
     });
 
     it('should allow creating a resource', (done) => {
@@ -106,7 +104,7 @@ describe('NarrativeComponent', () => {
         const testTitle: string = 'Test Title';
 
         narrativeService.create(testKey, testTitle)
-            .then(() => {
+            .subscribe(() => {
                 component.post('/')
                     .send({ key: testKey, title: testTitle })
                     .expect(400)
@@ -114,8 +112,7 @@ describe('NarrativeComponent', () => {
                         if (err) return done(err);
                         done();
                     });
-            })
-            .catch((err) => done(err))
+            }, (err) => done(err))
     });
 
     it('should allow deleting a resource', (done) => {
@@ -124,7 +121,7 @@ describe('NarrativeComponent', () => {
         const testTitle: string = 'Test Title';
         
         narrativeService.create(testKey, testTitle)
-            .then((narrative) => {
+            .subscribe((narrative) => {
                 
                 component.delete('/' + narrative.id)
                     .expect(204)
@@ -132,8 +129,7 @@ describe('NarrativeComponent', () => {
                         if (err) return done(err);
                         done();
                     });
-            })
-            .catch((err) => done(err))
+            }, (err) => done(err));
     });
 
     it('should 404 when a resource to be deleted is not found', (done) => {
@@ -153,7 +149,7 @@ describe('NarrativeComponent', () => {
         const newTitle: string = 'New Title';
         
         narrativeService.create(testKey, testTitle)
-            .then((narrative) => {
+            .subscribe((narrative) => {
                 
                 component.patch('/' + narrative.id)
                     .send({ title: newTitle })
@@ -168,8 +164,7 @@ describe('NarrativeComponent', () => {
                             })
                             .catch(() => done(new Error('Unable to find patched narrative')))
                     });
-            })
-            .catch(() => done(new Error('Unable to create narrative')))
+            }, () => done(new Error('Unable to create narrative')));
     });
 
     it('should throw an error when patching invalid fields', (done) => {
@@ -178,17 +173,19 @@ describe('NarrativeComponent', () => {
         const testTitle: string = 'Test Title';
         const newKey: string = 'testKey';
         
-        narrativeService.create(testKey, testTitle)
-            .then((narrative) => {
-                component.patch('/' + narrative.id)
-                    .send({ key: newKey })
-                    .expect(400)
-                    .end((err) => {
-                        if (err) return done(err);
-                        done();
-                    });
-            })
-            .catch(() => done(new Error('Unable to create narrative')))
+        narrativeService.create('newKey', testTitle)
+            .subscribe(() => {
+                narrativeService.create(testKey, testTitle)
+                    .subscribe((narrative) => {
+                        component.patch('/' + narrative.id)
+                            .send({ key: 'newKey' })
+                            .expect(400)
+                            .end((err) => {
+                                if (err) return done(err);
+                                done();
+                            });
+                    }, () => done(new Error('Unable to create narrative')));
+            });
     });
 
     it('should return 400 if a resource update was not successful', (done) => {

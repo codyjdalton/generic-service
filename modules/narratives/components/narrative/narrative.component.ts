@@ -3,7 +3,7 @@
  */
 import { LitComponent } from '@litstack/core';
 import { HttpResponse, HttpRequest } from '@litstack/core/dist/http';
-import { GetMapping, DeleteMapping, PostMapping, PatchMapping } from '@litstack/core/dist/http/mappings';
+import { PostMapping, PatchMapping } from '@litstack/core/dist/http/mappings';
 
 import { NarrativeService } from '../../../common/services/narrative.service';
 import { INarrative } from '../../../common/models/narrative.model';
@@ -19,8 +19,10 @@ export class NarrativeComponent extends ResourceComponent {
     @PostMapping()
     public createOne(req: HttpRequest, res: HttpResponse): void {
         this.mainService.create(req.body.key, req.body.title)
-            .then((narrative: INarrative) => res.success(narrative, 201))
-            .catch(() => res.errored(400));
+            .subscribe(
+                (narrative: INarrative) => res.success(narrative, 201),
+                () => res.errored(400)
+            );
     }
 
     @PatchMapping({
