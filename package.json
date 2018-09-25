@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "start": "npm test; tsc && node dist/index.js",
     "test": "nyc mocha test/before-all.ts test/"
   },
   "repository": {
@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@litstack/core": "^0.7.0",
+    "@litstack/core": "^0.8.0",
     "dotenv": "^6.0.0",
     "mongoose": "^5.2.13",
     "rxjs": "^6.3.2",

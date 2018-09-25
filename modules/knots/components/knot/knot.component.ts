@@ -3,7 +3,7 @@
  */
 import { LitComponent } from '@litstack/core';
 import { HttpResponse, HttpRequest } from '@litstack/core/dist/http';
-import { GetMapping, DeleteMapping, PostMapping, RequestMapping } from '@litstack/core/dist/http/mappings';
+import { PostMapping, PatchMapping } from '@litstack/core/dist/http/mappings';
 
 import { KnotService } from '../../../common/services/knot.service';
 import { IKnot } from '../../../common/models/knot.model';
@@ -21,5 +21,20 @@ export class KnotComponent extends ResourceComponent {
         this.mainService.create(req.body.narrativeId, req.body.key, req.body.title)
             .then((knot: IKnot) => res.success(knot, 201))
             .catch(() => res.errored(400));
+    }
+    
+    @PatchMapping({
+        path: ':id'
+    })
+    public update(req: HttpRequest, res: HttpResponse): void {
+
+        const updateBody: object = {
+            key: req.body.key || undefined,
+            title: req.body.title || undefined
+        };
+
+        this.mainService.updateById(req.params.id, updateBody)
+            .then((item: IKnot) => res.success(item))
+            .catch((err) => res.errored(400, err));
     }
 }

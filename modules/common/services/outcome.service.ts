@@ -1,11 +1,14 @@
+import { Observable, from } from 'rxjs';
+import { concatMap, tap } from 'rxjs/operators';
+
 import { LitService } from "@litstack/core";
 import { ResourceService } from "./resource.service";
 import { Model, Document } from 'mongoose';
 import * as uuid from 'uuid';
 
-import { Outcome, IOutcome } from '../models/outcome.model';
+import { Outcome, IOutcome, DestinationTypes } from '../models/outcome.model';
 import { KnotService } from './knot.service';
-import { IKnot } from "../models/knot.model";
+import { Thread } from '../models/thread.model';
 
 @LitService()
 export class OutcomeService extends ResourceService {
@@ -16,8 +19,8 @@ export class OutcomeService extends ResourceService {
         super();
     }
 
-    public create(narrativeId: string, knotId: string, 
-           key: string, outcome: string): Promise<IOutcome> {
+    public create(narrativeId: string, knotId: string, key: string, 
+        destinationType: DestinationTypes, destinationId: string): Promise<IOutcome> {
         return new Promise((resolve, reject) => {
 
             const anOutcome: IOutcome = new Outcome({
@@ -25,21 +28,27 @@ export class OutcomeService extends ResourceService {
                 narrativeId: narrativeId,
                 knotId: knotId,
                 key: key,
-                outcome: outcome
+                destinationType: destinationType,
+                destinationId: destinationId
             });
 
             // verify the knot is found
             this.knotService.findById(knotId)
-                .then((knot: IKnot) => {
-                    if(knot.narrativeId === narrativeId) {
-                        anOutcome.save()
+                .then(() => {
+                    anOutcome.save()
                             .then((outcome: IOutcome) => resolve(outcome))
                             .catch(err => reject(err));
-                    } else {
-                        reject();
-                    }
                 })
                 .catch(err => reject(err))
         });
+    }
+
+    public deleteById(id: string): Observable<any> {
+        let anItem: IOutcome;
+        return from(this.model.findOne({ id: id })).pipe(
+            tap((item: IOutcome) => anItem = item),
+            concatMap(() => from(Thread.deleteMany({ narrativeId: anItem.id }))),
+            concatMap(() => from(anItem.remove()))
+        );
     }
 }

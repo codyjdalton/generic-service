@@ -1,3 +1,6 @@
+import { Observable, from } from 'rxjs';
+import { concatMap, tap } from 'rxjs/operators';
+
 import { LitService } from "@litstack/core";
 import { ResourceService } from "./resource.service";
 import { Model, Document } from 'mongoose';
@@ -5,6 +8,8 @@ import * as uuid from 'uuid';
 
 import { NarrativeService } from './narrative.service';
 import { Knot, IKnot } from '../models/knot.model';
+import { IThread, Thread } from '../models/thread.model';
+import { Outcome } from "../models/outcome.model";
 
 @LitService()
 export class KnotService extends ResourceService {
@@ -34,5 +39,15 @@ export class KnotService extends ResourceService {
                 })
                 .catch(() => reject());
         });
+    }
+
+    public deleteById(id: string): Observable<any> {
+        let anItem: IKnot;
+        return from(this.model.findOne({ id: id })).pipe(
+            tap((item: IKnot) => anItem = item),
+            concatMap(() => from(Thread.deleteMany({ narrativeId: anItem.id }))),
+            concatMap(() => from(Outcome.deleteMany({ narrativeId: anItem.id }))),
+            concatMap(() => from(anItem.remove()))
+        );
     }
 }

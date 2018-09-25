@@ -1,4 +1,6 @@
 import { Model, Document } from "mongoose";
+import { Observable, from, of } from "rxjs";
+import { map, concatMap } from 'rxjs/operators';
 
 export abstract class ResourceService {
 
@@ -22,7 +24,9 @@ export abstract class ResourceService {
                 .then((item: Document) => {
                     Object.keys(updateBody).forEach(
                         key => {
-                            item[key] = updateBody[key];
+                            if(updateBody[key] !== undefined && key !== 'id' && key !== '_id') {
+                                item[key] = updateBody[key];
+                            }
                         }
                     );
                     item.save()
@@ -44,14 +48,20 @@ export abstract class ResourceService {
         });
     }
 
-    public deleteById(id: string): Promise<null> {
-        return new Promise((resolve, reject) => {
-            this.model.findOne({ id: id })
-                .then((item: Document) => {
-                    item.remove()
-                        .then(() => resolve(null));
-                })
-                .catch(err => reject(err))
-        });
+    public findByIdObservable(id: string): Observable<Document> {
+        return from(this.model.findOne({ id: id })).pipe(
+            map((result: Document) => {
+                if (!result) {
+                    throw Error();
+                }
+                return result;
+            })
+        )
+    }
+
+    public deleteById(id: string): Observable<any> {
+        return from(this.model.findOne({ id: id })).pipe(
+            concatMap((item: Document) => from(item.remove())),
+        );
     }
 }

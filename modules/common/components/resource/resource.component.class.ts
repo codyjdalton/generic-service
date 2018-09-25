@@ -19,9 +19,11 @@ export abstract class ResourceComponent {
         path: ':id'
     })
     public findOne(req: HttpRequest, res: HttpResponse): void {
-        this.mainService.findById(req.params.id)
-            .then((item: Document) => res.success(item))
-            .catch(() => res.errored(404));
+        this.mainService.findByIdObservable(req.params.id)
+            .subscribe(
+                (item: Document) => res.success(item),
+                () => res.errored(404)
+            );
     }
 
     @DeleteMapping({
@@ -29,7 +31,9 @@ export abstract class ResourceComponent {
     })
     public deleteById(req: HttpRequest, res: HttpResponse): void {
         this.mainService.deleteById(req.params.id)
-            .then(() => res.success({}, 204))
-            .catch(() => res.errored(404));
+            .subscribe(
+                () => res.success({}, 204),
+                () => res.errored(404)
+            );
     }
 }
