@@ -43,14 +43,16 @@ describe('KnotComponent', () => {
                 component.post('/')
                     .send({ narrativeId: narrative.id, key: 'test knot', title: 'test title' })
                     .expect(201)
-                    .end((err, res: IKnot) => {
+                    .end((err, res) => {
                         if (err) return done(err);
-                        knotService.findById(res.id)
-                            .then((knot: IKnot) => {
-                                expect(knot.id).to.equal(res.id)
-                                done();
-                            })
-                            .catch((err) => done(err));
+                        knotService.findById(res.body.id)
+                            .subscribe(
+                                (knot: IKnot) => {
+                                    expect(knot.id).to.equal(res.body.id)
+                                    done();
+                                },
+                                (err) => done(err)
+                            );
                     });
             }, (err) => done(err));
     });
@@ -69,28 +71,12 @@ describe('KnotComponent', () => {
             }, (err) => done(err));
     });
 
-    it('should throw an error if a narrative is not associated with a knot', (done) => {
-        
-        component.post('/')
-            .send({ narrativeId: 'does-not-exist', key: 'test-key', title: 'test-title' })
-            .expect(400)
-            .end((err, res: IKnot) => {
-                if (err) return done(err);
-                knotService.findById(res.id)
-                    .then((knot: IKnot) => {
-                        expect(knot.id).to.equal(res.id)
-                        done();
-                    })
-                    .catch((err) => done(err));
-            });
-    });
-
     it('should allow deleting a knot', (done) => {
 
         narrativeService.create('testKey', 'test title')
             .subscribe((narrative: INarrative) => {
                 knotService.create(narrative.id, 'testKey', 'title')
-                    .then((knot) => {
+                    .subscribe((knot) => {
                         component.delete('/' + knot.id)
                             .expect(204)
                             .end((err) => {
@@ -105,7 +91,7 @@ describe('KnotComponent', () => {
         narrativeService.create('testKey', 'test title')
             .subscribe((narrative: INarrative) => {
                 knotService.create(narrative.id, 'testKey', 'title')
-                    .then((knot) => {
+                    .subscribe((knot) => {
                         component.patch('/' + knot.id)
                             .send({ title: 'anothertesttitle' })
                             .expect(200)

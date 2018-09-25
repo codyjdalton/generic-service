@@ -29,7 +29,7 @@ describe('OutcomeComponent', () => {
         narrativeService.create('testKey', 'Test Title')
             .subscribe((narrative: INarrative) => {
                 knotService.create(narrative.id, 'testKey', 'Test Title')
-                    .then((knot: IKnot) => {
+                    .subscribe((knot: IKnot) => {
                         narrativeId = narrative.id;
                         knotId = knot.id;
                         done();
@@ -79,7 +79,7 @@ describe('OutcomeComponent', () => {
                 
                 // verify the item made it to storage
                 outcomeService.findById(res.body.id)
-                    .then(() => {
+                    .subscribe(() => {
                         done();
                     });
             });
@@ -102,7 +102,7 @@ describe('OutcomeComponent', () => {
                 
                 // verify the item made it to storage
                 outcomeService.findById(res.body.id)
-                    .then(() => {
+                    .subscribe(() => {
                         done();
                     });
             });
@@ -136,8 +136,7 @@ describe('OutcomeComponent', () => {
     it('should allow patching an existing outcome', (done) => {
 
         outcomeService.create(narrativeId, knotId, 'testOutcome', DestinationTypes.DONE, undefined)
-            .then((outcome: IOutcome) => {
-
+            .subscribe((outcome: IOutcome) => {
                 component.patch('/' + outcome.id)
                     .send({ key: 'newKey' })
                     .expect(200)
@@ -145,7 +144,7 @@ describe('OutcomeComponent', () => {
                         if(err) { return done(err) } 
                         
                         outcomeService.findById(outcome.id)
-                            .then((anOutcome: IOutcome) => {
+                            .subscribe((anOutcome: IOutcome) => {
 
                                 expect(anOutcome.key).to.equal('newKey');
                                 done();

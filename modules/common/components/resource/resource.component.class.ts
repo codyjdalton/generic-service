@@ -12,14 +12,14 @@ export abstract class ResourceComponent {
     @GetMapping()
     public findAll(res: HttpResponse): void {
         this.mainService.findAll()
-            .then((items: Document[]) => res.success(items));
+            .subscribe((items: Document[]) => res.success(items));
     }
 
     @GetMapping({
         path: ':id'
     })
     public findOne(req: HttpRequest, res: HttpResponse): void {
-        this.mainService.findByIdObservable(req.params.id)
+        this.mainService.findById(req.params.id)
             .subscribe(
                 (item: Document) => res.success(item),
                 () => res.errored(404)

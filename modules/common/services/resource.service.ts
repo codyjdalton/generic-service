@@ -6,49 +6,30 @@ export abstract class ResourceService {
 
     model: Model<Document>;
 
-    public findByParams(params: any): Promise<Document[]> {
-        return new Promise((resolve, reject) => {
-            this.model.find(params)
-                .then((items: any[]) => resolve(items))
-                .catch(err => reject(err))
-        });
+    public findByParams(params: any): Observable<Document[]> {
+        return from(this.model.find(params));
     }
 
-    public findAll(): Promise<Document[]> {
+    public findAll(): Observable<Document[]> {
         return this.findByParams({});
     }
 
-    public updateById(id: string, updateBody: object): Promise<Document> {
-        return new Promise((resolve, reject) => {
-            this.model.findOne({ id: id })
-                .then((item: Document) => {
-                    Object.keys(updateBody).forEach(
-                        key => {
-                            if(updateBody[key] !== undefined && key !== 'id' && key !== '_id') {
-                                item[key] = updateBody[key];
-                            }
+    public updateByIdObservable(id: string, updateBody: object): Observable<Document> {
+        return from(this.model.findOne({ id: id })).pipe(
+            concatMap((item: Document) => {
+                Object.keys(updateBody).forEach(
+                    key => {
+                        if(updateBody[key] !== undefined && key !== 'id' && key !== '_id') {
+                            item[key] = updateBody[key];
                         }
-                    );
-                    item.save()
-                        .then((item: Document) => resolve(item))
-                        .catch(err => reject(err))
-                })
-                .catch(err => reject(err))
-        });
+                    }
+                );
+                return from(item.save());
+            })
+        );
     }
 
-    public findById(id: string): Promise<Document> {
-        return new Promise((resolve, reject) => {
-            this.model.findOne({ id: id })
-                .then((item: Document) => {
-                    if(item) resolve(item);
-                    reject(null);
-                })
-                .catch(err => reject(err))
-        });
-    }
-
-    public findByIdObservable(id: string): Observable<Document> {
+    public findById(id: string): Observable<Document> {
         return from(this.model.findOne({ id: id })).pipe(
             map((result: Document) => {
                 if (!result) {

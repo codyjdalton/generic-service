@@ -90,11 +90,13 @@ describe('NarrativeComponent', () => {
                 if (err) return done(err);
                 
                 narrativeService.findById(res.body.id)
-                    .then((narrative) => {
-                        expect(narrative.id).to.equal(res.body.id);
-                        done();
-                    })
-                    .catch((err) => done(err));
+                    .subscribe(
+                        (narrative) => {
+                            expect(narrative.id).to.equal(res.body.id);
+                            done();
+                        },
+                        (err) => done(err)
+                    );
             });
     });
 
@@ -158,11 +160,13 @@ describe('NarrativeComponent', () => {
                         if (err) return done(err);
                         
                         narrativeService.findById(narrative.id)
-                            .then((checkNarrative: INarrative) => {
-                                expect(checkNarrative.title).to.equal(newTitle);
-                                done();
-                            })
-                            .catch(() => done(new Error('Unable to find patched narrative')))
+                            .subscribe(
+                                (checkNarrative: INarrative) => {
+                                    expect(checkNarrative.title).to.equal(newTitle);
+                                    done();
+                                },
+                                () => done(new Error('Unable to find patched narrative'))
+                            );
                     });
             }, () => done(new Error('Unable to create narrative')));
     });

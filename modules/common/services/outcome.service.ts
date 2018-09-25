@@ -20,27 +20,18 @@ export class OutcomeService extends ResourceService {
     }
 
     public create(narrativeId: string, knotId: string, key: string, 
-        destinationType: DestinationTypes, destinationId: string): Promise<IOutcome> {
-        return new Promise((resolve, reject) => {
+        destinationType: DestinationTypes, destinationId: string): Observable<IOutcome> {
 
-            const anOutcome: IOutcome = new Outcome({
-                id: uuid.v4(),
-                narrativeId: narrativeId,
-                knotId: knotId,
-                key: key,
-                destinationType: destinationType,
-                destinationId: destinationId
-            });
-
-            // verify the knot is found
-            this.knotService.findById(knotId)
-                .then(() => {
-                    anOutcome.save()
-                            .then((outcome: IOutcome) => resolve(outcome))
-                            .catch(err => reject(err));
-                })
-                .catch(err => reject(err))
+        const anOutcome: IOutcome = new Outcome({
+            id: uuid.v4(),
+            narrativeId: narrativeId,
+            knotId: knotId,
+            key: key,
+            destinationType: destinationType,
+            destinationId: destinationId
         });
+
+        return from(anOutcome.save());
     }
 
     public deleteById(id: string): Observable<any> {

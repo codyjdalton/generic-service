@@ -22,10 +22,10 @@ describe('Service:ResourceService', () => {
     it('should throw an error when unable to find by params', (done) => {
 
         service.findByParams(1)
-            .then(() => {})
-            .catch(() => {
-                done();
-            });
+            .subscribe(
+                () => {},
+                () => done()
+            );
     });
 
     it('should throw an error when unable to find by id', (done) => {
@@ -33,10 +33,10 @@ describe('Service:ResourceService', () => {
         const disruptor: any = {};
 
         service.findById(disruptor)
-            .then(() => {})
-            .catch(() => {
-                done();
-            });
+            .subscribe(
+                () => {},
+                () => done()
+            );
     });
 
     it('should throw an error when unable to find by id', (done) => {
@@ -44,9 +44,10 @@ describe('Service:ResourceService', () => {
         const disruptor: any = {};
 
         service.findById(disruptor)
-            .then(() => {})
-            .catch(() => {
-                done();
-            });
+            .subscribe(
+                () => {},
+                () => done()
+            );
     });
 });
+

@@ -53,8 +53,10 @@ export class ThreadComponent extends ResourceComponent  {
             photoInList: body.photoInList
         };
 
-        this.mainService.updateById(req.params.id, updateBody)
-            .then((outcome: IThread) => res.success(outcome))
-            .catch((err) => res.errored(400, err));
+        this.mainService.updateByIdObservable(req.params.id, updateBody)
+            .subscribe(
+                (outcome: IThread) => res.success(outcome),
+                (err) => res.errored(400, err)
+            );
     }
 }
