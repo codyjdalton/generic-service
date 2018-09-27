@@ -9,6 +9,4 @@ import { NarrativeComponent } from './components/narrative/narrative.component';
         NarrativeComponent
     ],
 })
-export class NarrativesModule {
-
-}
+export class NarrativesModule {}

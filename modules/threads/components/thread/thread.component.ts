@@ -6,9 +6,8 @@ import { HttpRequest, HttpResponse } from '@litstack/core/dist/http';
 import { PostMapping, PatchMapping } from '@litstack/core/dist/http/mappings';
 import { ResourceComponent } from '../../../common/components/resource/resource.component.class';
 
-import { Thread, IThread } from '../../../common/models/thread.model';
+import { IThread } from '../../../common/models/thread.model';
 import { ThreadService } from '../../../common/services/thread.service';
-
 
 @LitComponent()
 export class ThreadComponent extends ResourceComponent  {
@@ -20,15 +19,8 @@ export class ThreadComponent extends ResourceComponent  {
     @PostMapping()
     createOne(req: HttpRequest, res: HttpResponse): void {
         const body: IThread = req.body;
-        this.mainService.create(
-            body.narrativeId,
-            body.knotId,
-            body.outcomeId,
-            body.title,
-            body.headline,
-            body.builders,
-            body.photoBackground,
-            body.photoIcon,
+        this.mainService.create(body.narrativeId, body.knotId, body.outcomeId,
+            body.title, body.headline, body.builders,  body.photoBackground, body.photoIcon,
             body.photoInList
         )
         .subscribe(
@@ -43,7 +35,6 @@ export class ThreadComponent extends ResourceComponent  {
     public update(req: HttpRequest, res: HttpResponse): void {
 
         const body: IThread = req.body;
-
         const updateBody: object = {
             title: body.title,
             headline: body.headline,

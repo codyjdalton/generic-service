@@ -2,7 +2,7 @@
  * app.component
  */
 import { LitComponent } from '@litstack/core';
-import { HttpRequest, HttpResponse } from '@litstack/core/dist/http';
+import { HttpResponse } from '@litstack/core/dist/http';
 import { GetMapping } from '@litstack/core/dist/http/mappings';
 
 import { AppConstants } from './app.constants';
