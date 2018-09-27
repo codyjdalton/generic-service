@@ -17,6 +17,12 @@ export class NarrativeService extends ResourceService {
 
     model: Model<INarrative> = Narrative;
 
+    /**
+     * @method create
+     * @param {string} key 
+     * @param {string} title
+     * @return {Observable<INarrative>}
+     */
     public create(key: string, title: string): Observable<INarrative> {
 
         const aNarrative: INarrative = new Narrative({
@@ -28,6 +34,11 @@ export class NarrativeService extends ResourceService {
         return from(aNarrative.save());
     }
 
+    /**
+     * @method deleteById
+     * @param {string} id
+     * @return {Observable<any>}
+     */
     public deleteById(id: string): Observable<any> {
         let anItem: INarrative;
         return from(this.model.findOne({ id: id })).pipe(

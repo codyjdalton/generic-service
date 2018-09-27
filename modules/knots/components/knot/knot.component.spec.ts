@@ -14,12 +14,24 @@ describe('KnotComponent', () => {
     let component: LitComponentTest;
     let knotService: KnotService;
     let narrativeService: NarrativeService;
+    let aNarrative: INarrative;
+
+    before((done) => {
+        knotService = Injector.resolve(KnotService);
+        narrativeService = Injector.resolve(NarrativeService);
+
+        narrativeService.create('testKey', 'test title')
+            .subscribe(
+                (narrative: INarrative) => {
+                    aNarrative = narrative;
+                    done();
+                }
+            );
+    });
 
     beforeEach(() => {
         
         component = TestBed.start(KnotComponent);
-        knotService = Injector.resolve(KnotService);
-        narrativeService = Injector.resolve(NarrativeService);
     });
 
     afterEach((done) => {
@@ -37,70 +49,55 @@ describe('KnotComponent', () => {
     });
 
     it('should allow creating a knot', (done) => {
-        
-        narrativeService.create('testKey', 'test title')
-            .subscribe((narrative: INarrative) => {
-                component.post('/')
-                    .send({ narrativeId: narrative.id, key: 'test knot', title: 'test title' })
-                    .expect(201)
-                    .end((err, res) => {
-                        if (err) return done(err);
-                        knotService.findById(res.body.id)
-                            .subscribe(
-                                (knot: IKnot) => {
-                                    expect(knot.id).to.equal(res.body.id)
-                                    done();
-                                },
-                                (err) => done(err)
-                            );
-                    });
-            }, (err) => done(err));
+        component.post('/')
+            .send({ narrativeId: aNarrative.id, key: 'test knot', title: 'test title' })
+            .expect(201)
+            .end((err, res) => {
+                if (err) return done(err);
+                knotService.findById(res.body.id)
+                    .subscribe(
+                        (knot: IKnot) => {  
+                            expect(knot.id).to.equal(res.body.id)
+                            done();
+                        },
+                        (err) => done(err)
+                    );
+            });
     });
 
     it('should require all required fields', (done) => {
-        
-        narrativeService.create('testKey', 'test title')
-            .subscribe((narrative: INarrative) => {
-                component.post('/')
-                    .send({ narrativeId: narrative.id })
-                    .expect(400)
-                    .end((err, res: IKnot) => {
-                        if (err) return done(err);
-                        done();
-                    });
-            }, (err) => done(err));
+        component.post('/')
+            .send({ narrativeId: aNarrative.id })
+            .expect(400)
+            .end((err) => {
+                if (err) return done(err);
+                done();
+            });
     });
 
     it('should allow deleting a knot', (done) => {
-
-        narrativeService.create('testKey', 'test title')
-            .subscribe((narrative: INarrative) => {
-                knotService.create(narrative.id, 'testKey', 'title')
-                    .subscribe((knot) => {
-                        component.delete('/' + knot.id)
-                            .expect(204)
-                            .end((err) => {
-                                if (err) return done(err);
-                                done();
-                            });
+        knotService.create(aNarrative.id, 'testKey', 'title')
+            .subscribe((knot) => {
+                component.delete('/' + knot.id)
+                    .expect(204)
+                    .end((err) => {
+                        if (err) return done(err);
+                        done();
                     });
-            }, (err) => done(err));
+            });
     });
 
     it('should update patched fields', (done) => {
-        narrativeService.create('testKey', 'test title')
-            .subscribe((narrative: INarrative) => {
-                knotService.create(narrative.id, 'testKey', 'title')
-                    .subscribe((knot) => {
-                        component.patch('/' + knot.id)
-                            .send({ title: 'anothertesttitle' })
-                            .expect(200)
-                            .end((err) => {
-                                if (err) return done(err);
-                                done();
-                            });
+        knotService.create(aNarrative.id, 'testKey', 'title')
+            .subscribe((knot) => {
+                component.patch('/' + knot.id)
+                    .send({ title: 'anothertesttitle' })
+                    .expect(200)
+                    .end((err) => {
+                        if (err) return done(err);
+                        done();
                     });
-            }, (err) => done(err));
+            });
     });
 
     it('should throw an error when updating patched fields fails', (done) => {

@@ -21,18 +21,9 @@ describe('Service:ResourceService', () => {
 
     it('should throw an error when unable to find by params', (done) => {
 
-        service.findByParams(1)
-            .subscribe(
-                () => {},
-                () => done()
-            );
-    });
+        const disruptor: any = 1;
 
-    it('should throw an error when unable to find by id', (done) => {
-
-        const disruptor: any = {};
-
-        service.findById(disruptor)
+        service.findByParams(disruptor)
             .subscribe(
                 () => {},
                 () => done()

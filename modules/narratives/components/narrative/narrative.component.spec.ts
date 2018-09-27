@@ -1,21 +1,28 @@
 import { expect } from 'chai';
 
+import { Observable, from, of } from "rxjs";
+import { map, concatMap, tap, concat } from 'rxjs/operators';
+
 import { TestBed, LitComponentTest } from '@litstack/core/dist/testing';
 import { Injector } from 'super-injector';
 
+import { KnotService } from '../../../common/services/knot.service';
 import { NarrativeComponent } from './narrative.component';
 import { Narrative, INarrative } from '../../../common/models/narrative.model';
 import { NarrativeService } from '../../../common/services/narrative.service';
+import { IKnot } from '../../../common/models/knot.model';
 
 describe('NarrativeComponent', () => {
 
     let component: LitComponentTest;
     let narrativeService: NarrativeService;
+    let knotService: KnotService;
 
     beforeEach(() => {
         
         component = TestBed.start(NarrativeComponent);
         narrativeService = Injector.resolve(NarrativeService);
+        knotService = Injector.resolve(KnotService);
     });
 
     afterEach((done) => {
@@ -152,13 +159,11 @@ describe('NarrativeComponent', () => {
         
         narrativeService.create(testKey, testTitle)
             .subscribe((narrative) => {
-                
                 component.patch('/' + narrative.id)
                     .send({ title: newTitle })
                     .expect(200)
                     .end((err) => {
                         if (err) return done(err);
-                        
                         narrativeService.findById(narrative.id)
                             .subscribe(
                                 (checkNarrative: INarrative) => {
@@ -200,5 +205,29 @@ describe('NarrativeComponent', () => {
             .end((err) => {
                 done();
             });
+    });
+
+    it('should cascade delete', (done) => {
+
+        let aNarrative: INarrative;
+
+        from(narrativeService.create('test', 'title'))
+            .pipe(
+                tap((narrative: INarrative) => aNarrative = narrative),
+                concatMap(() => knotService.create(aNarrative.id, 'testKey', 'test title'))
+            )
+            .subscribe(
+                (knot: IKnot) => {
+                    component.delete('/' + aNarrative.id)
+                        .expect(204)
+                        .end(() => {
+                            knotService.findById(knot.id)
+                                .subscribe(
+                                    () => {},
+                                    () => done()
+                                );
+                        });
+                }
+            );
     });
 });
