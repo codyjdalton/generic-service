@@ -4,7 +4,7 @@ import { map, concatMap } from 'rxjs/operators';
 
 export abstract class ResourceService {
 
-    model: Model<Document>;
+    model: any;
 
     /**
      * @method findByParams
