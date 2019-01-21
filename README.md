@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/codyjdalton/narrative-service.svg?branch=master)](https://travis-ci.org/codyjdalton/narrative-service) [![Coverage Status](https://coveralls.io/repos/github/codyjdalton/narrative-service/badge.svg?branch=master)](https://coveralls.io/github/codyjdalton/narrative-service?branch=master)
+[![Build Status](https://travis-ci.org/codyjdalton/core-service.svg?branch=master)](https://travis-ci.org/codyjdalton/core-service) [![Coverage Status](https://coveralls.io/repos/github/codyjdalton/core-service/badge.svg?branch=master)](https://coveralls.io/github/codyjdalton/core-service?branch=master)
 
-# Narrative Service
+# Core Service
 
 ## About
 
@@ -10,8 +10,8 @@ A RESTful HTTP service to support managing branching storylines. Ideal consumer 
 
 Clone this repo
 ```
-> git clone https://github.com/codyjdalton/narrative-service
-> cd narrative-service
+> git clone https://github.com/codyjdalton/core-service
+> cd core-service
 ```
 Create a `.env` file at the project root `/`. Copy the contents from `.env.example` into `.env` and replace them with your own values.
 
